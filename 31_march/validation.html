@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<body>
+    <center>
+        <h1>Student Registration</h1>
+        <!-- <h2></h2> -->
+        <pre>Name       :   <input type="text" placeholder="Enter your name" id="name"></pre><br>
+        <pre>Roll Number:   <input type="text" placeholder="Enter your roll no" id="rollno"></pre><br>
+        <pre>Password   :   <input type="password" placeholder="Enter your Password" id="pwd"></pre><br>
+        <button type="button" id="insert" >Insert</button>
+        <button type="button" id="delete" >Delete</button>
+        <button type="button" id="search" >Get</button>
+        <button type="button" id="update" >Update</button>
+        <button type="button" id="clear" >Clear</button>
+        <button type="button" id="validate" >Validate</button>
+        <div id="div"></div>
+    </center>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+      
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyBH1OEbMkzKd8juntewcJOfJSGXFrp5YVg",
+          authDomain: "awtlab-69a1a.firebaseapp.com",
+          databaseURL: "https://awtlab-69a1a-default-rtdb.firebaseio.com",
+          projectId: "awtlab-69a1a",
+          storageBucket: "awtlab-69a1a.appspot.com",
+          messagingSenderId: "462967105901",
+          appId: "1:462967105901:web:1209ec7075c6c19dcf9264"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        import{getDatabase,ref,set,get,child,update,remove} from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
+        const db=getDatabase();
+        var j_name=document.getElementById("name");
+        var j_rollno=document.getElementById("rollno");
+        var j_pwd=document.getElementById("pwd");
+        var j_insert=document.getElementById("insert");
+        var j_delete=document.getElementById("delete");
+        var j_update=document.getElementById("update");
+        var j_search=document.getElementById("search");
+        var j_clear=document.getElementById("clear");
+        var j_validate=document.getElementById("validate");
+        function insertData(){
+            document.getElementById("div").innerHTML="";
+            set(ref(db,"Student/"+j_rollno.value),{
+                Name:j_name.value,
+                RollNo:j_rollno.value,
+                Password:j_pwd.value
+            }).then(()=>alert("data is inserted"))
+            .catch((err)=>alert("Error Occured"+err))
+            clearData()
+        }
+
+        function updateData(){
+            //x=j_rollno.value;
+            document.getElementById("div").innerHTML="";
+            set(ref(db,"Student/"+j_rollno.value),{
+                Name:j_name.value,
+                RollNo:j_rollno.value,
+                Password:j_pwd.value
+            }).then(()=>{alert("data is updated")})
+            .catch((err)=>{alert("Error Occured"+err)})
+            clearData()
+        }
+        
+        function deleteData(){
+            document.getElementById("div").innerHTML="";
+            set(ref(db,"Student/"+j_rollno.value),{
+            }).then(()=>{alert("data is deleted")})
+            .catch((err)=>alert("Error Occured"+err))
+        }
+        function clearData(){
+            document.getElementById("div").innerHTML="";
+            j_name.value="";
+            j_rollno.value="";
+            j_pwd.value="";
+        }
+    
+        function searchData(){
+            document.getElementById("div").innerHTML="";
+            const dbref=ref(db);
+            get(child(dbref,"Student/"+j_rollno.value))
+            .then((data)=>{
+                if(data.exists()){
+                    alert("search successful");
+                    j_name.value=data.val().Name;
+                    j_rollno.value=data.val().RollNo;
+                    j_pwd.value=data.val().Password;
+                    //document.getElementById("div").innerHTML="Name: "+data.val().Name+" RollNo: "+data.val().RollNo;
+                }
+                else{
+                    alert("Search Unsuccessful");
+                }
+            })
+            .catch((err)=>alert("Error occured "+err))
+        }
+
+        function validateData(){
+            document.getElementById("div").innerHTML="";
+            const dbref=ref(db);
+            var n=j_name.value;
+            var p=j_pwd.value;
+            get(child(dbref,"Student/"+j_rollno.value))
+            .then((data)=>{
+                if(data.exists()){
+                    // var res=n.localecompare(data.val().Name);
+                    //document.write(data.val().Name+" "+n+" "+data.val().Password+" "+p)
+                    if(n===data.val().Name){
+                        //alert("name field")
+                        //var res2=p.localecompare(data.val().Password);
+                        if(p===data.val().Password){
+                            //alert("password field")
+                            alert("user found")
+                            document.getElementById("div").innerHTML="Login Successful";
+                        }
+                        else{
+                            alert("No student found with given details");
+                        }
+                    }
+                }
+                else{
+                    alert("No student found with given details");
+                }
+            })
+            .catch((err)=>alert("Error occured "+err))
+        }
+        j_delete.addEventListener("click",deleteData);
+        j_update.addEventListener("click",updateData);
+        j_search.addEventListener("click",searchData);
+        j_insert.addEventListener("click",insertData);
+        j_clear.addEventListener("click",clearData);
+        j_validate.addEventListener("click",validateData);
+      </script>
+</body>
+</html>
